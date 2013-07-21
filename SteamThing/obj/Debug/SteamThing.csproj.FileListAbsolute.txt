@@ -1,0 +1,28 @@
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\bin\Debug\SteamThing.exe.config
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\obj\Debug\SteamThing.csprojResolveAssemblyReference.cache
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\obj\Debug\SteamThing.Form1.resources
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\obj\Debug\SteamThing.Properties.Resources.resources
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\obj\Debug\SteamThing.csproj.GenerateResource.Cache
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\bin\Debug\SteamThing.exe
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\bin\Debug\SteamThing.pdb
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\bin\Debug\Newtonsoft.Json.dll
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\bin\Debug\Newtonsoft.Json.pdb
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\bin\Debug\Newtonsoft.Json.xml
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\obj\Debug\SteamThing.exe
+c:\users\fallenwyvern\documents\visual studio 2012\Projects\SteamThing\SteamThing\obj\Debug\SteamThing.pdb
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\bin\Debug\SteamThing.exe.config
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\obj\Debug\SteamThing.exe
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\obj\Debug\SteamThing.pdb
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\obj\Debug\SteamThing.csprojResolveAssemblyReference.cache
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\obj\Debug\SteamThing.Form1.resources
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\obj\Debug\SteamThing.Properties.Resources.resources
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\obj\Debug\SteamThing.csproj.GenerateResource.Cache
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\bin\Debug\SteamThing.exe
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\bin\Debug\SteamThing.pdb
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\bin\Debug\Newtonsoft.Json.dll
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\bin\Debug\Newtonsoft.Json.pdb
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\bin\Debug\Newtonsoft.Json.xml
+C:\Users\FallenWyvern\Documents\Visual Studio 2012\Projects\SteamDriver\SteamThing\obj\Debug\SteamThing.voiceChat.resources
+C:\SteamDriver\SteamThing\bin\Debug\SteamThing.exe.config
+C:\SteamDriver\SteamThing\obj\Debug\SteamThing.exe
+C:\SteamDriver\SteamThing\obj\Debug\SteamThing.pdb

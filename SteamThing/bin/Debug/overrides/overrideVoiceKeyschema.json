@@ -1,0 +1,26 @@
+{
+	"voiceKey": {
+		"command": [
+			{
+				"trigger":"screen",
+				"key": "{F12}"
+			},
+			{
+				"trigger":"ok",
+				"key": "{ENTER}"
+			},
+			{
+				"trigger":"close",
+				"key": "%{F4}"
+			},
+			{
+				"trigger":"overlay",
+				"key": "+{TAB}"
+			},
+			{
+				"trigger":"Alt Tab",
+				"key": "%{TAB}"
+			},
+		]		
+	}
+}

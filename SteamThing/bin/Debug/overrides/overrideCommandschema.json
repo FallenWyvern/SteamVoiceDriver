@@ -1,0 +1,92 @@
+{
+	"commandOverride": {
+		"command": [
+			{
+				"type":"Steam",
+				"trigger": "friends",
+				"command": "steam://open/friends"
+			},
+			{
+				"type":"Steam",
+				"trigger": "big picture",
+				"command": "steam://open/bigpicture"
+			},
+			{
+				"type":"Steam",
+				"trigger": "calc",
+				"command": "calc.exe"
+			},
+			{
+				"type":"Steam",
+				"trigger": "main",
+				"command": "steam://open/main"
+			},
+			{
+				"type":"Steam",
+				"trigger": "downloads",
+				"command": "steam://open/downloads"
+			},
+			{
+				"type":"Steam",
+				"trigger": "games list",
+				"command": "steam://open/games"
+			},
+			{
+				"type":"Steam",
+				"trigger": "media",
+				"command": "steam://open/mymedia"
+			},
+			{
+				"type":"Steam",
+				"trigger": "news",
+				"command": "steam://open/news"
+			},
+			{
+				"type":"Steam",
+				"trigger": "screenshots",
+				"command": "steam://open/screenshots"
+			},
+			{
+				"type":"Steam",
+				"trigger": "tools",
+				"command": "steam://open/tools"
+			},
+			{
+				"type":"Steam",
+				"trigger": "settings",
+				"command": "steam://open/settings"
+			},			
+			{
+				"type":"game",
+				"trigger": "launch",
+				"command": "steam://run/"
+			},
+			{
+				"type":"game",
+				"trigger": "backup",
+				"command": "steam://backup/"
+			},
+			{
+				"type":"game",
+				"trigger": "store",
+				"command": "steam://store/"
+			},
+			{
+				"type":"game",
+				"trigger": "uninstall",
+				"command": "steam://uninstall/"
+			},
+			{
+				"type":"game",
+				"trigger": "validate",
+				"command": "steam://validate/"
+			},
+			{
+				"type":"game",
+				"trigger": "requirements",
+				"command": "steam://checksysreqs/"
+			}
+		]
+		
+	}
+}

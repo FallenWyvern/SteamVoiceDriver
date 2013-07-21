@@ -1,0 +1,23 @@
+{
+	"gameOverride": {
+		"game": [
+			{
+				"appid": 1,
+				"name": "Test Entry"
+			},
+			{
+				"appid": 2,
+				"name": "Test Entry 2"
+			},
+			{
+				"appid": 208480,
+				"name": "Assassins Creed III"
+			},
+			{
+				"appid": 39140,
+				"name": "Final Fantasy 7"
+			}
+		]
+		
+	}
+}
