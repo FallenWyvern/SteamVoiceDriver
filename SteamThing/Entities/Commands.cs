@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace SteamThing
 {
-    class commandClass
+    class Commands
     {
         public CommandOverride commandOverride { get; set; }
     }
+
     public class cCommand
     {
         public string type { get; set; }

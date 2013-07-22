@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SteamThing
 {
-    class steamGameList
+    class SteamGameList
     {
         public Applist applist { get; set; }
     }

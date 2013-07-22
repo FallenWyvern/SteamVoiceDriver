@@ -20,14 +20,14 @@ using System.Diagnostics;           // Used to launch steam commands.
 
 namespace SteamThing
 {
-    public partial class Form1 : Form
+    public partial class DriverForm : Form
     {        
         WebClient client = new WebClient();                 // Network client used to download Steam data.
-        steamGameList allGames = new steamGameList();       // This is an object filled with the Steam JSON
+        SteamGameList allGames = new SteamGameList();       // This is an object filled with the Steam JSON
         Process steamProcess = new Process();               // This is used to perform steam protocol commands.
         overrideClass allOverrides = new overrideClass();   // JSON Game overrides are loaded into this.
         voiceKeyClass allVoiceKeys = new voiceKeyClass();   // JSON Voice Key data is loaded into this.
-        commandClass allCommands = new commandClass();      // JSON Commands are loaded into this.
+        Commands allCommands = new Commands();      // JSON Commands are loaded into this.
         specificGameBinding mainGameBindings = new specificGameBinding();   // Game specific bindings
        
         string lastBinds = "";
@@ -58,7 +58,7 @@ namespace SteamThing
         bool lockspeech = false;                            // Is lock enabled or not.
                 
         // Stage 1.
-        public Form1()
+        public DriverForm()
         {
             InitializeComponent();
             string[] args = Environment.GetCommandLineArgs();   // Grab command line arguments.
@@ -219,7 +219,7 @@ namespace SteamThing
         private void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             jsonString = e.Result;                                                      // String of JSON to be converted...
-            allGames = JsonConvert.DeserializeObject<steamGameList>(jsonString);        // Gets converted here
+            allGames = JsonConvert.DeserializeObject<SteamGameList>(jsonString);        // Gets converted here
             loadLocalOverrides();                                                       // Load the JSON overrides
             label1.Text = "Steam Licenses: " + allGames.applist.apps.Count.ToString();  // Write out how many licenses exist.
             speech();                                                                   // Start Speech module.
@@ -237,7 +237,7 @@ namespace SteamThing
             tempString = loadFromFile(@".\overrides\overrideCommandschema.json");
             if (tempString.Length > 0)
             {
-                allCommands = JsonConvert.DeserializeObject<commandClass>(tempString);
+                allCommands = JsonConvert.DeserializeObject<Commands>(tempString);
                 useCommands = true;
             }
             tempString = loadFromFile(@".\overrides\overrideGameschema.json");
