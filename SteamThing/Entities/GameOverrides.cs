@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace SteamThing
 {
-    class steamGameList
+    class GameOverrides
     {
-        public Applist applist { get; set; }
+        public GameOverride gameOverride { get; set; }
     }
-
-    public class App
+    public class Game
     {
         public int appid { get; set; }
         public string name { get; set; }
     }
 
-    public class Applist
+    public class GameOverride
     {
-        public List<App> apps { get; set; }
+        public List<Game> game { get; set; }
     }
 }
