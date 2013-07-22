@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SteamThing
 {
-    class voiceKeyClass
+    class VoiceKeys
     {
         public VoiceKey voiceKey { get; set; }
     }

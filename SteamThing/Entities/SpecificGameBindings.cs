@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SteamThing
 {
-    class specificGameBinding
+    class GameSpecificBinding
     {
         public Bindings bindings { get; set; }
     }

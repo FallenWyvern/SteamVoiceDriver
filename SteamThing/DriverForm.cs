@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;                   // Used to create network client
 using System.IO;                    // Access local files
-using Newtonsoft.Json;              // JSON data is used to store information
+using ServiceStack.Text;             // JSON data is used to store information
 using System.Speech.Recognition;    // Basic speech utilities
 using System.Threading;             // Used to thread the application
-using System.Diagnostics;           // Used to launch steam commands.
+using System.Diagnostics;
+using System.Configuration;           // Used to launch steam commands.
 
 // The application is three fold. First, it loads the entire steam content library as JSON using the web API.
 // Secondly, the application loads local override files to get the commands, alternate game names and voice keys.
@@ -21,28 +22,28 @@ using System.Diagnostics;           // Used to launch steam commands.
 namespace SteamThing
 {
     public partial class DriverForm : Form
-    {        
+    {
+        JsonSerializer<SteamGameList> gameListSerializer = new JsonSerializer<SteamGameList>();
+        JsonSerializer<Commands> commandSerializer = new JsonSerializer<Commands>();
+        JsonSerializer<VoiceKeys> voiceKeySerializer = new JsonSerializer<VoiceKeys>();
+        JsonSerializer<GameSpecificBinding> bindingSerializer = new JsonSerializer<GameSpecificBinding>();
         WebClient client = new WebClient();                 // Network client used to download Steam data.
         SteamGameList allGames = new SteamGameList();       // This is an object filled with the Steam JSON
         Process steamProcess = new Process();               // This is used to perform steam protocol commands.
-        overrideClass allOverrides = new overrideClass();   // JSON Game overrides are loaded into this.
-        voiceKeyClass allVoiceKeys = new voiceKeyClass();   // JSON Voice Key data is loaded into this.
+        GameOverrides allOverrides = new GameOverrides();   // JSON Game overrides are loaded into this.
+        VoiceKeys allVoiceKeys = new VoiceKeys();   // JSON Voice Key data is loaded into this.
         Commands allCommands = new Commands();      // JSON Commands are loaded into this.
-        specificGameBinding mainGameBindings = new specificGameBinding();   // Game specific bindings
-       
+        GameSpecificBinding mainGameBindings = new GameSpecificBinding();   // Game specific bindings
+
         string lastBinds = "";
 
-        // Note, you can really not use the game overrides or voice keys, but you should be using commands. It's here to mirror the structure.
-        bool useOverides = false;                           // Are you using game overrides (if not, they're not loaded into the speech grammars).
-        bool useVoiceKeys = false;                          // Are you using voice keys (if not, they're not loaded into the speech grammars).
-        bool useCommands = false;                           // Are you using commands (if not, they're not loaded into the speech grammars).
         bool useChat = false;                               // Toggle for voice chat.
 
         string jsonString = "";                             // String used to load the Steam JSON, so it can later be parsed.
         string locale = "en-US";                            // Locale information, by default it's english-US
         string appTitle = "Steam Driver";                   // Name of the App. If run with a command line option, locale will be added to this.
         int loadingProgress = 0;                            // Used to animate network activity.
-        
+
         public SpeechRecognitionEngine recog;               // Speech Recognition Engine. If it wasn't "Engine" it would use the windows implementation.        
         Choices triggers;                                   // List of voice commands that hard coded triggers are loaded into.
         Choices commands;                                   // Grammar list of commands, loaded from the command file.
@@ -56,129 +57,77 @@ namespace SteamThing
         bool steamControl = false;                          // Switch used to track if we're listening for steam commands.
         int gameSelected = 0;                               // Index of which game is currently selected.
         bool lockspeech = false;                            // Is lock enabled or not.
-                
+
         // Stage 1.
         public DriverForm()
         {
             InitializeComponent();
             string[] args = Environment.GetCommandLineArgs();   // Grab command line arguments.
-            for (int i = 0; i < args.Length; i++)               
-            {                                                   
+            for (int i = 0; i < args.Length; i++)
+            {
                 if (args[i].Length == 5)                        // If the argument is 5 characters...
                 {
-                    locale = args[i];                           
-                    if (!checkLocale(locale))                   // Check its validity.
+                    locale = args[i];
+                    if (!CheckLocale(locale))                   // Check its validity.
                     {
                         locale = "en-US";                       // If invalid, return to english US
                     }
                     appTitle += " " + locale;                   // Append to app title.
-                }                
+                }
             }
 
             // This adds the sounds for audio feedback.
             comboBox2.Items.Add("Asterisk");
-            comboBox2.Items.Add("Beep");            
-            comboBox2.Items.Add("Exclamation");  
-            comboBox2.Items.Add("Hand");  
+            comboBox2.Items.Add("Beep");
+            comboBox2.Items.Add("Exclamation");
+            comboBox2.Items.Add("Hand");
             comboBox2.Items.Add("Question");
             comboBox2.SelectedIndex = 0;
         }
 
-        private bool checkLocale(string localization) 
+        private static HashSet<String> locales = new HashSet<string>()
         {
-            bool returnBool = false;                        // Return true/false for validity
-            switch (localization)
-            {
-                case "ca-ES":
-                    returnBool = true;
-                    break;
-                case "da-DK":
-                    returnBool = true;
-                    break;
-                case "de-DE":
-                    returnBool = true;
-                    break;
-                case "en-AU":
-                    returnBool = true;
-                    break;
-                case "en-CA":
-                    returnBool = true;
-                    break;
-                case "en-GB":
-                    returnBool = true;
-                    break;
-                case "en-IN":
-                    returnBool = true;
-                    break;
-                case "en-US":
-                    returnBool = true;
-                    break;
-                case "es-ES":
-                    returnBool = true;
-                    break;
-                case "es-MX":
-                    returnBool = true;
-                    break;
-                case "fi-FI":
-                    returnBool = true;
-                    break;
-                case "fr-CA":
-                    returnBool = true;
-                    break;
-                case "fr-FR":
-                    returnBool = true;
-                    break;
-                case "it-IT":
-                    returnBool = true;
-                    break;
-                case "ja-JP":
-                    returnBool = true;
-                    break;
-                case "ko-KR":
-                    returnBool = true;
-                    break;
-                case "nb-NO":
-                    returnBool = true;
-                    break;
-                case "nl-NL":
-                    returnBool = true;
-                    break;
-                case "pl-PL":
-                    returnBool = true;
-                    break;
-                case "pt-BR":
-                    returnBool = true;
-                    break;
-                case "pt-PT":
-                    returnBool = true;
-                    break;
-                case "ru-RU":
-                    returnBool = true;
-                    break;
-                case "sv-SE":
-                    returnBool = true;
-                    break;
-                case "zh-CN":
-                    returnBool = true;
-                    break;
-                case "zh-HK":
-                    returnBool = true;
-                    break;
-                case "zh-TW":
-                    returnBool = true;
-                    break;
-                default:
-                    break;
-            }            
-            return returnBool;
+            "ca-ES",
+            "da-DK",
+            "de-DE",
+            "en-AU",
+            "en-CA",
+            "en-GB",
+            "en-IN",
+            "en-US",
+            "es-ES",
+            "es-MX",
+            "fi-FI",
+            "fr-CA",
+            "fr-FR",
+            "it-IT",
+            "ja-JP",
+            "ko-KR",
+            "nb-NO",
+            "nl-NL",
+            "pl-PL",
+            "pt-BR",
+            "pt-PT",
+            "ru-RU",
+            "sv-SE",
+            "zh-CN",
+            "zh-HK",
+            "zh-TW"
+        };
+
+        private bool CheckLocale(string localization)
+        {
+            return locales.Contains(localization);
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {                        
+        {
             // If we're adding a Cache of the JSON data, this is a good place to do it.
             // Because the download is async, even if we load from HDD you can still update
             // the cache.
+
             this.Text = appTitle;                                                           // Set app title 
+            //todo: cache this locally
             Uri url = new Uri(@"http://api.steampowered.com/ISteamApps/GetAppList/v0002/"); // URL for the major app list.           
             client.DownloadStringAsync(url);                                                // Grab data from the URL
             client.DownloadProgressChanged += (sender1, e1) => growLoad();                  // Animate spinner
@@ -215,68 +164,57 @@ namespace SteamThing
                     break;
             }
         }   // Spinner used to indicate network activity.
-        
+
         private void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             jsonString = e.Result;                                                      // String of JSON to be converted...
-            allGames = JsonConvert.DeserializeObject<SteamGameList>(jsonString);        // Gets converted here
-            loadLocalOverrides();                                                       // Load the JSON overrides
+            allGames = gameListSerializer.DeserializeFromString(jsonString);        // Gets converted here
             label1.Text = "Steam Licenses: " + allGames.applist.apps.Count.ToString();  // Write out how many licenses exist.
+            allCommands = LoadLocalOverrides<Commands>();
             speech();                                                                   // Start Speech module.
+
         }
 
         // Stage 2
-        private void loadLocalOverrides()
+        private T LoadLocalOverrides<T>()
         {
-            // This pattern works three times:
             // First fill temp strings with the JSON.
             // Then make sure the length is greater than 0 (so it's valid).
             // Then fill the master object (allCommands, allOverrides, allVoiceKeys)
-            // And set the boolean. 
             string tempString = "";
-            tempString = loadFromFile(@".\overrides\overrideCommandschema.json");
+            tempString = loadFromFile(@".\overrides\" + typeof(T).ToString() + "schema.json");
             if (tempString.Length > 0)
             {
-                allCommands = JsonConvert.DeserializeObject<Commands>(tempString);
-                useCommands = true;
+                var overrideObject = JsonSerializer.DeserializeFromString<T>(tempString);
+                return overrideObject;
             }
-            tempString = loadFromFile(@".\overrides\overrideGameschema.json");
-            if (tempString.Length > 0)
-            {
-                allOverrides = JsonConvert.DeserializeObject<overrideClass>(tempString);
-                useOverides = true;
-            }
-            tempString = loadFromFile(@".\overrides\overrideVoiceKeyschema.json");
-            if (tempString.Length > 0)
-            {
-                allVoiceKeys = JsonConvert.DeserializeObject<voiceKeyClass>(tempString);
-                useVoiceKeys = true;
-            }
-        }        
+            return default(T);
+        }
 
         private string loadFromFile(string filename)
         {
             // This just makes it faster to load files, rather than typing this three times.
             // Plus, it could easily be reused for other purposes later.
             string text = "";
-            if (File.Exists(@".\" + filename))
+            string wantedFilename = ConfigurationManager.AppSettings["DataPath"] + "\\" + filename;
+            if (File.Exists(wantedFilename))
             {
-                StreamReader streamReader = new StreamReader(@".\" + filename);
+                StreamReader streamReader = new StreamReader(wantedFilename);
                 text = streamReader.ReadToEnd();
-            }            
+            }
             return text;
         }
 
         // Stage 3
         private void speech()
-        {            
+        {
             recog = new SpeechRecognitionEngine(new System.Globalization.CultureInfo(locale));  // Loads the localisation information.
             triggers = new Choices();                                                           // Initiates the grammar list for triggers
             commands = new Choices();                                                           // Initiates the grammar list for commands
             voiceKeys = new Choices();                                                          // Initiates the grammar list for voicekeys
             overrides = new Choices();                                                          // Initiates the grammar list for game overrides            
             comboBox1.Items.Clear();                                                            // Fills the comboBox with the total list of games.
-            
+
             recog.RequestRecognizerUpdate();                                                    // Required to update the voice recognition.
 
             for (int i = 0; i < allGames.applist.apps.Count; i++)                               // then load the grammar into the recognizer for master game list.
@@ -287,7 +225,7 @@ namespace SteamThing
 
             recog.LoadGrammar(new Grammar(triggers));                                           // This loads it, once games are all added.
 
-            if (useVoiceKeys)                                                                   // If we're using voice keys
+            if (allVoiceKeys.voiceKey != null)                                                                   // If we're using voice keys
             {                                                                                   // then add them to the choice list.
                 for (int i = 0; i < allVoiceKeys.voiceKey.command.Count; i++)
                 {
@@ -296,7 +234,7 @@ namespace SteamThing
                 recog.LoadGrammar(new Grammar(voiceKeys));                                      // then load the grammar into the recognizer for voice keys.
             }
 
-            if (useCommands)                                                                    // If we're using commands
+            if (allCommands != null)                                                                    // If we're using commands
             {                                                                                   // then add them to the choice list.
                 for (int i = 0; i < allCommands.commandOverride.command.Count; i++)
                 {
@@ -315,19 +253,19 @@ namespace SteamThing
             recog.LoadGrammar(new Grammar(new GrammarBuilder("hide")));
             recog.LoadGrammar(new Grammar(new GrammarBuilder("show")));
             recog.LoadGrammar(new Grammar(new GrammarBuilder("unlock")));
-            recog.LoadGrammar(new Grammar(new GrammarBuilder("start voice chat")));        
+            recog.LoadGrammar(new Grammar(new GrammarBuilder("start voice chat")));
             recog.LoadGrammar(new Grammar(new GrammarBuilder("toggle voice keys")));
-                        
-            if (useOverides)                                                                    // Overrides are added last. They have to be added after
+
+            if (allOverrides.gameOverride != null)                                                                    // Overrides are added last. They have to be added after
             {                                                                                   // the master list, as a good practice. It doesn't actually
                 for (int i = 0; i < allOverrides.gameOverride.game.Count; i++)                  // affect anything, since they're kept separate.
                 {
                     overrides.Add(allOverrides.gameOverride.game[i].name);
-                }   
+                }
                 recog.LoadGrammar(new Grammar(overrides));                                      // Adds the grammar to the recognizer for game overrides. 
             }
-            
-            recog.SpeechDetected +=recog_SpeechDetected;                                        // Event when speech is detected. Not recgonized, just detected.
+
+            recog.SpeechDetected += recog_SpeechDetected;                                        // Event when speech is detected. Not recgonized, just detected.
             recog.SpeechRecognized += recog_SpeechRecognized;                                   // Event when a word is found. Any processing is over there.
             recog.SetInputToDefaultAudioDevice();                                               // This sets us to the default microphone set in the Windows audio panel.
             recog.RecognizeAsync(RecognizeMode.Multiple);                                       // This just makes voice recognition work beautifully. Just leave it alone.
@@ -462,7 +400,7 @@ namespace SteamThing
                     }
 
                     if (e.Result.Text == "load game binding")                                                                               // Game specific bindings
-                    {       
+                    {
                         if (File.Exists(@".\overrides\" + allGames.applist.apps[gameSelected].appid + ".JSON") && lastBinds == "")          // Make sure the file exists.
                         {
                             richTextBox1.Text += "Found " + allGames.applist.apps[gameSelected].name + " bindings." + Environment.NewLine;
@@ -478,12 +416,12 @@ namespace SteamThing
                             {
                                 richTextBox1.Text += "Bindings Loaded." + Environment.NewLine;          // This bit is in a try, in case the file
                                 string tempString = "";                                                 // is malformed or has no commands.
-                                tempString = loadFromFile(@".\overrides\" + lastBinds + ".json");       
+                                tempString = loadFromFile(@".\overrides\" + lastBinds + ".json");
                                 richTextBox1.Text += lastBinds + ".json" + Environment.NewLine;
                                 if (tempString.Length > 0)
                                 {
                                     gameBinds = new Choices();                                                          // Initiates the grammar list for Game specific Bindings
-                                    mainGameBindings = JsonConvert.DeserializeObject<specificGameBinding>(tempString);  // And then puts the JSON into the object.
+                                    mainGameBindings = bindingSerializer.DeserializeFromString(tempString);  // And then puts the JSON into the object.
 
                                     for (int i = 0; i < mainGameBindings.bindings.bindingCmds.Count; i++)
                                     {
@@ -565,7 +503,7 @@ namespace SteamThing
                                 }
                             }
                         }
-                    }                   
+                    }
                 }
             }
         }
@@ -622,7 +560,7 @@ namespace SteamThing
                         break;
                     default:
                         System.Media.SystemSounds.Beep.Play();
-                        break;                        
+                        break;
                 }
             }
         }

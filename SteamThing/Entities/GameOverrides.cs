@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SteamThing
 {
-    class overrideClass
+    class GameOverrides
     {
         public GameOverride gameOverride { get; set; }
     }
